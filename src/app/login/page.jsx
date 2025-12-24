@@ -4,11 +4,11 @@ import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { toast } from "react-hot-toast";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -16,7 +16,6 @@ export default function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
     setLoading(true);
 
     try {
@@ -27,8 +26,9 @@ export default function LoginPage() {
       });
 
       if (result.error) {
-        setError("Invalid email or password");
+        toast.error("Invalid email or password. Please try again.");
       } else {
+        toast.success("Welcome back to the Circle!");
         // Fetch session to check role for redirection
         const res = await fetch("/api/auth/session");
         const session = await res.json();
@@ -41,7 +41,7 @@ export default function LoginPage() {
         router.refresh();
       }
     } catch (error) {
-      setError("Something went wrong. Please try again.");
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -72,12 +72,6 @@ export default function LoginPage() {
         </div>
 
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {error && (
-            <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
-              <p className="text-red-700 text-sm font-medium">{error}</p>
-            </div>
-          )}
-
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>

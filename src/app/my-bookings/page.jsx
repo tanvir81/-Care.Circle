@@ -4,6 +4,8 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import Swal from "sweetalert2";
+import { toast } from "react-hot-toast";
 
 export default function MyBookings() {
   const { data: session, status } = useSession();
@@ -27,7 +29,20 @@ export default function MyBookings() {
   }, [session, router]);
 
   const cancelBooking = async (id) => {
-    if (confirm("Are you sure you want to cancel this booking?")) {
+    const result = await Swal.fire({
+      title: "Cancel Booking?",
+      text: "This action cannot be undone. Are you sure?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#C5D89D",
+      confirmButtonText: "Yes, Cancel It",
+      cancelButtonText: "Keep Booking",
+      borderRadius: "2rem"
+    });
+
+    if (result.isConfirmed) {
+      toast.loading("Cancelling...", { id: "cancel-toast" });
       const res = await fetch(`/api/bookings/${id}`, { 
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -35,11 +50,22 @@ export default function MyBookings() {
       });
       if (res.ok) {
         setBookings(bookings.map(b => b._id === id ? { ...b, status: "Cancelled" } : b));
+        toast.success("Booking cancelled successfully", { id: "cancel-toast" });
+        Swal.fire({
+          title: "Cancelled!",
+          text: "Your booking has been cancelled.",
+          icon: "success",
+          confirmButtonColor: "#C5D89D",
+          borderRadius: "2rem"
+        });
+      } else {
+        toast.error("Failed to cancel booking", { id: "cancel-toast" });
       }
     }
   };
 
   const payBooking = async (id) => {
+    toast.loading("Processing payment...", { id: "payment-toast" });
     const res = await fetch(`/api/bookings/${id}`, { 
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
@@ -47,6 +73,16 @@ export default function MyBookings() {
     });
     if (res.ok) {
       setBookings(bookings.map(b => b._id === id ? { ...b, paymentStatus: "Paid" } : b));
+      toast.success("Payment successful!", { id: "payment-toast" });
+      Swal.fire({
+        title: "Paid!",
+        text: "Thank you for your payment!",
+        icon: "success",
+        confirmButtonColor: "#C5D89D",
+        borderRadius: "2rem"
+      });
+    } else {
+      toast.error("Payment failed", { id: "payment-toast" });
     }
   };
 

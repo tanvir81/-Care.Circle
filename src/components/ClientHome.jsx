@@ -168,7 +168,7 @@ export default function ClientHome({ initialServices = [] }) {
             className="space-y-8 relative z-10"
           >
             <span className="inline-block px-4 py-1.5 rounded-full bg-secondary/20 text-foreground text-[10px] font-black tracking-[0.2em] uppercase">
-              The Care.Circle Story
+              About The Care.Circle
             </span>
             <h2 className="text-4xl md:text-5xl font-black text-foreground leading-tight">Why Families Choose Our <span className="text-secondary">Community</span></h2>
             <p className="text-foreground/60 leading-relaxed text-lg">

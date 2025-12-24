@@ -4,6 +4,8 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import Swal from "sweetalert2";
+import { toast } from "react-hot-toast";
 
 export default function ManageBookings() {
   const { data: session, status } = useSession();
@@ -29,15 +31,42 @@ export default function ManageBookings() {
   }, []);
 
   const updateStatus = async (id, newStatus) => {
-    const res = await fetch(`/api/bookings/${id}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ status: newStatus }),
+    const actionText = newStatus === "Confirmed" ? "confirm" : newStatus === "Completed" ? "complete" : "cancel";
+    const confirmColor = newStatus === "Cancelled" ? "#d33" : "#C5D89D";
+
+    const result = await Swal.fire({
+      title: `${newStatus} Booking?`,
+      text: `Are you sure you want to ${actionText} this booking?`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: confirmColor,
+      cancelButtonColor: "#aaa",
+      confirmButtonText: `Yes, ${newStatus}`,
+      borderRadius: "2rem"
     });
-    if (res.ok) {
-      setBookings(
-        bookings.map((b) => (b._id === id ? { ...b, status: newStatus } : b))
-      );
+
+    if (result.isConfirmed) {
+      toast.loading("Updating status...", { id: "admin-update-toast" });
+      const res = await fetch(`/api/bookings/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (res.ok) {
+        setBookings(
+          bookings.map((b) => (b._id === id ? { ...b, status: newStatus } : b))
+        );
+        toast.success(`Booking ${newStatus}`, { id: "admin-update-toast" });
+        Swal.fire({
+          title: "Update Successful",
+          text: `The booking is now ${newStatus}.`,
+          icon: "success",
+          confirmButtonColor: "#C5D89D",
+          borderRadius: "2rem"
+        });
+      } else {
+        toast.error("Failed to update status", { id: "admin-update-toast" });
+      }
     }
   };
 

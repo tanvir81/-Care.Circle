@@ -4,12 +4,12 @@ import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import Swal from "sweetalert2";
+import { toast } from "react-hot-toast";
 
 export default function AddService() {
   const { data: session, status } = useSession();
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
-  const [messageType, setMessageType] = useState("success");
   const [fileName, setFileName] = useState("");
   const router = useRouter();
 
@@ -24,7 +24,6 @@ export default function AddService() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setMessage("");
 
     const formData = new FormData(e.target);
     const file = formData.get("imageFile");
@@ -33,6 +32,7 @@ export default function AddService() {
       let imageUrl = formData.get("image");
 
       if (file && file.size > 0) {
+        toast.loading("Uploading system asset...", { id: "upload-toast" });
         const uploadData = new FormData();
         uploadData.append("file", file);
         
@@ -44,10 +44,13 @@ export default function AddService() {
         const uploadResult = await uploadRes.json();
         if (uploadRes.ok) {
           imageUrl = uploadResult.url;
+          toast.success("Asset uploaded successfully!", { id: "upload-toast" });
         } else {
           throw new Error("Image upload failed. Please check the file size/type.");
         }
       }
+
+      toast.loading("Deploying service to catalog...", { id: "deploy-toast" });
 
       const serviceData = {
         name: formData.get("name"),
@@ -64,18 +67,22 @@ export default function AddService() {
       });
 
       if (res.ok) {
-        setMessage("Service catalog updated successfully!");
-        setMessageType("success");
+        toast.success("Service catalog updated!", { id: "deploy-toast" });
+        await Swal.fire({
+          title: "Service Deployed!",
+          text: "The new care service is now live in the catalog.",
+          icon: "success",
+          confirmButtonColor: "#C5D89D",
+          borderRadius: "2rem"
+        });
         e.target.reset();
         setFileName("");
-        setTimeout(() => router.push("/"), 2000);
+        router.push("/");
       } else {
-        setMessageType("error");
-        setMessage("Authorization failed. Ensure you have admin privileges.");
+        toast.error("Deployment failed. Admin access required.", { id: "deploy-toast" });
       }
     } catch (error) {
-      setMessageType("error");
-      setMessage(error.message || "A network error occurred. Please try again.");
+      toast.error(error.message || "A network error occurred.", { id: "deploy-toast" });
     } finally {
       setLoading(false);
     }
@@ -133,25 +140,6 @@ export default function AddService() {
         className="bg-white rounded-[3rem] border border-primary/5 shadow-2xl shadow-primary/5 overflow-hidden"
       >
         <form onSubmit={handleSubmit} className="p-10 lg:p-16 space-y-12">
-          <AnimatePresence mode="wait">
-            {message && (
-              <motion.div 
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className={`p-6 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] border flex items-center gap-4 ${
-                  messageType === "success" 
-                    ? "bg-primary/10 text-primary border-primary/20" 
-                    : "bg-red-500/10 text-red-500 border-red-500/20"
-                }`}
-              >
-                <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${messageType === "success" ? "bg-primary/20" : "bg-red-500/20"}`}>
-                   {messageType === "success" ? "✓" : "!"}
-                </div>
-                {message}
-              </motion.div>
-            )}
-          </AnimatePresence>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
             {/* Left Column */}

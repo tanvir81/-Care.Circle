@@ -10,13 +10,13 @@ export const sendInvoiceEmail = async (userEmail, bookingData) => {
   });
 
   const mailOptions = {
-    from: '"Care.xyz" <noreply@care.xyz>',
+    from: '"Care.Circle" <noreply@carecircle.com>',
     to: userEmail,
-    subject: "Booking Invoice - Care.xyz",
+    subject: "Booking Invoice - Care.Circle",
     text: `Your booking for ${bookingData.serviceName} is confirmed. Total Cost: $${bookingData.totalCost}. Duration: ${bookingData.duration} hrs.`,
     html: `
       <div style="font-family: sans-serif; padding: 20px; border: 1px solid #eee; border-radius: 10px;">
-        <h2 style="color: #2563eb;">Care.xyz Invoice</h2>
+        <h2 style="color: #2563eb;">Care.Circle Invoice</h2>
         <p>Dear Customer, your booking has been received.</p>
         <hr />
         <p><strong>Service:</strong> ${bookingData.serviceName}</p>
@@ -24,7 +24,7 @@ export const sendInvoiceEmail = async (userEmail, bookingData) => {
         <p><strong>Total Cost:</strong> $${bookingData.totalCost}</p>
         <p><strong>Status:</strong> Pending Confirmation</p>
         <hr />
-        <p style="font-size: 12px; color: #777;">Thank you for choosing Care.xyz!</p>
+        <p style="font-size: 12px; color: #777;">Thank you for choosing Care.Circle!</p>
       </div>
     `,
   };

@@ -4,6 +4,8 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { motion } from "framer-motion";
+import Swal from "sweetalert2";
+import { toast } from "react-hot-toast";
 
 const divisions = ["Dhaka", "Chittagong", "Rajshahi", "Khulna", "Barisal", "Sylhet", "Rangpur", "Mymensingh"];
 
@@ -37,24 +39,57 @@ export default function BookingPage() {
 
   const handleBooking = async (e) => {
     e.preventDefault();
-    const bookingData = {
-      ...formData,
-      serviceId: service._id,
-      serviceName: service.name,
-      totalCost,
-      userEmail: session.user.email,
-      status: "Pending",
-      createdAt: new Date()
-    };
 
-    const res = await fetch("/api/bookings", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(bookingData),
+    const result = await Swal.fire({
+      title: "Confirm Booking?",
+      text: `You are booking ${service.name} for ${formData.duration} hours. Total cost will be $${totalCost}.`,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#C5D89D",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, Book Now!",
+      cancelButtonText: "Maybe Later",
+      background: "#fff",
+      color: "#000",
+      borderRadius: "2rem"
     });
 
-    if (res.ok) {
-      router.push("/my-bookings");
+    if (result.isConfirmed) {
+      toast.loading("Processing your booking...", { id: "booking-toast" });
+      
+      const bookingData = {
+        ...formData,
+        serviceId: service._id,
+        serviceName: service.name,
+        totalCost,
+        userEmail: session.user.email,
+        status: "Pending",
+        createdAt: new Date()
+      };
+
+      try {
+        const res = await fetch("/api/bookings", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(bookingData),
+        });
+
+        if (res.ok) {
+          toast.success("Booking successful!", { id: "booking-toast" });
+          Swal.fire({
+            title: "Success!",
+            text: "Your booking has been received. Check your email for the invoice!",
+            icon: "success",
+            confirmButtonColor: "#C5D89D",
+            borderRadius: "2rem"
+          });
+          router.push("/my-bookings");
+        } else {
+          toast.error("Booking failed. Please try again.", { id: "booking-toast" });
+        }
+      } catch (error) {
+        toast.error("Network error. Please check your connection.", { id: "booking-toast" });
+      }
     }
   };
 

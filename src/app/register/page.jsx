@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
+import { toast } from "react-hot-toast";
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -13,7 +14,6 @@ export default function RegisterPage() {
     nid: "",
     contact: ""
   });
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -28,11 +28,10 @@ export default function RegisterPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError("");
     setLoading(true);
 
     if (!validatePassword(formData.password)) {
-      setError("Password must be 6+ chars, with at least 1 uppercase and 1 lowercase letter.");
+      toast.error("Password must be 6+ chars, with at least 1 uppercase and 1 lowercase letter.");
       setLoading(false);
       return;
     }
@@ -47,6 +46,7 @@ export default function RegisterPage() {
       const data = await res.json();
       
       if (res.ok) {
+        toast.success("Welcome to the Circle! Registering...");
         // Auto-login after registration
         const loginRes = await signIn("credentials", {
           email: formData.email,
@@ -55,16 +55,17 @@ export default function RegisterPage() {
         });
 
         if (loginRes.ok) {
+          toast.success("Login successful!");
           router.push(redirect);
           router.refresh();
         } else {
           router.push("/login");
         }
       } else {
-        setError(data.error || "Registration failed");
+        toast.error(data.error || "Registration failed");
       }
     } catch (error) {
-      setError("Something went wrong");
+      toast.error("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -95,12 +96,6 @@ export default function RegisterPage() {
         </div>
         
         <form className="mt-8 space-y-4" onSubmit={handleSubmit}>
-          {error && (
-            <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
-              <p className="text-red-700 text-sm font-medium">{error}</p>
-            </div>
-          )}
-          
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
