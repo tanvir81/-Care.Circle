@@ -75,6 +75,29 @@ CareCircle is a modern, responsive web application designed to connect users wit
 
 ---
 
+## 🚀 Deployment to Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new).
+
+### Steps:
+1. Push your code to a GitHub repository.
+2. Import the repository into Vercel.
+3. Configure the **Environment Variables** (see below).
+4. Click **Deploy**.
+
+### Required Environment Variables:
+Ensure these are set in your Vercel Project Settings:
+- `MONGODB_URI`
+- `NEXTAUTH_SECRET`
+- `NEXTAUTH_URL`
+- `ADMIN_EMAIL`
+- `EMAIL_USER`
+- `EMAIL_PASS`
+- `GOOGLE_CLIENT_ID` (Optional)
+- `GOOGLE_CLIENT_SECRET` (Optional)
+
+---
+
 ## 📂 Project Structure
 
 - `/src/app`: Next.js App Router folders and pages.
