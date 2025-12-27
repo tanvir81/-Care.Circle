@@ -3,7 +3,7 @@
 CareCircle is a modern, responsive web application designed to connect users with professional caregiving services. Whether you need elderly care, baby care, or specialized nursing, CareCircle provides a seamless experience for finding and booking trusted caregivers.
 
 ## 🚀 Live Demo
-[View CareCircle Live]() *(Link to be added)*
+[View CareCircle Live](https://carecircle-eta.vercel.app)
 
 ---
 
