@@ -18,7 +18,6 @@ export default function BookingPage() {
   const [formData, setFormData] = useState({
     duration: 1,
     division: "",
-    district: "",
     city: "",
     area: "",
     address: ""
@@ -34,6 +33,21 @@ export default function BookingPage() {
         setLoading(false);
       });
   }, [id]);
+
+  useEffect(() => {
+    if (status === "authenticated" && session?.user?.role === "admin") {
+      Swal.fire({
+        title: "Admin Account Detected",
+        html: "You are logged in as an <strong>admin</strong>.<br/>To book services, please <strong>signup as a user</strong> and login.",
+        icon: "info",
+        confirmButtonColor: "#C5D89D",
+        confirmButtonText: "Got It",
+        borderRadius: "2rem"
+      }).then(() => {
+        router.push("/");
+      });
+    }
+  }, [status, session, router]);
 
   const totalCost = service ? formData.duration * service.price : 0;
 
@@ -141,12 +155,36 @@ export default function BookingPage() {
                 </select>
               </div>
 
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-foreground/30 uppercase tracking-widest ml-1">City</label>
+                <input
+                  type="text"
+                  required
+                  className="w-full px-5 py-4 bg-muted border border-primary/5 rounded-2xl focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all outline-none font-bold text-sm"
+                  placeholder="Enter City"
+                  value={formData.city}
+                  onChange={(e) => setFormData({ ...formData, city: e.target.value })}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-[10px] font-black text-foreground/30 uppercase tracking-widest ml-1">Area</label>
+                <input
+                  type="text"
+                  required
+                  className="w-full px-5 py-4 bg-muted border border-primary/5 rounded-2xl focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all outline-none font-bold text-sm"
+                  placeholder="Enter Area"
+                  value={formData.area}
+                  onChange={(e) => setFormData({ ...formData, area: e.target.value })}
+                />
+              </div>
+
               <div className="space-y-2 md:col-span-2">
-                <label className="text-[10px] font-black text-foreground/30 uppercase tracking-widest ml-1">Service Location Details</label>
+                <label className="text-[10px] font-black text-foreground/30 uppercase tracking-widest ml-1">Street Address</label>
                 <textarea
                   required
                   className="w-full px-5 py-4 bg-muted border border-primary/5 rounded-2xl focus:ring-4 focus:ring-primary/20 focus:border-primary transition-all outline-none font-bold text-sm min-h-[120px]"
-                  placeholder="Street address, House number, Area details..."
+                  placeholder="Street address, House number, Landmark..."
                   value={formData.address}
                   onChange={(e) => setFormData({ ...formData, address: e.target.value })}
                 ></textarea>

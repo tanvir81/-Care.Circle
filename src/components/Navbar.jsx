@@ -66,10 +66,12 @@ export default function Navbar() {
               About
               <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
             </Link>
-            <Link href="/#services" className={navLinkClass("/#services")}>
-              Services
-              <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
-            </Link>
+            {(!session || session.user.role !== "admin") && (
+              <Link href="/#services" className={navLinkClass("/#services")}>
+                Services
+                <span className="absolute bottom-0 left-0 w-full h-0.5 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+              </Link>
+            )}
             
             {session && (
               <>
@@ -187,7 +189,9 @@ export default function Navbar() {
             <div className="px-4 pt-4 pb-8 space-y-2">
               <Link href="/" onClick={() => setIsOpen(false)} className={mobileNavLinkClass("/")}>Home</Link>
               <Link href="/#about" onClick={() => setIsOpen(false)} className={mobileNavLinkClass("/#about")}>About</Link>
-              <Link href="/#services" onClick={() => setIsOpen(false)} className={mobileNavLinkClass("/#services")}>Services</Link>
+              {(!session || session.user.role !== "admin") && (
+                <Link href="/#services" onClick={() => setIsOpen(false)} className={mobileNavLinkClass("/#services")}>Services</Link>
+              )}
               
               {session && (
                 <>

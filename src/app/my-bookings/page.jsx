@@ -192,7 +192,7 @@ export default function MyBookings() {
                       <td className="px-8 py-6">
                         <div className="flex items-center gap-4">
                           <div className="w-12 h-12 bg-secondary/10 rounded-2xl flex items-center justify-center font-black text-secondary group-hover:scale-110 transition-transform">
-                            {booking.serviceName[0]}
+                            {booking.serviceName?.trim()?.charAt(0)?.toUpperCase()}
                           </div>
                           <div>
                             <div className="font-black text-foreground text-lg">{booking.serviceName}</div>
@@ -202,7 +202,12 @@ export default function MyBookings() {
                       </td>
                       <td className="px-8 py-6">
                         <div className="text-sm font-bold text-foreground/80">{booking.duration} Hours</div>
-                        <div className="text-[10px] font-black text-foreground/40 uppercase tracking-widest truncate max-w-[150px]">{booking.address}</div>
+                        <div className="text-[10px] font-black text-foreground/40 uppercase tracking-widest truncate max-w-[200px]">
+                          {booking.city}, {booking.area}
+                        </div>
+                        <div className="text-[9px] font-bold text-foreground/30 truncate max-w-[200px]">
+                          {booking.division}
+                        </div>
                       </td>
                       <td className="px-8 py-6">
                         <div className="flex flex-col gap-2">
@@ -283,7 +288,7 @@ export default function MyBookings() {
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 bg-secondary/10 rounded-2xl flex items-center justify-center font-black text-secondary">
-                        {booking.serviceName[0]}
+                        {booking.serviceName?.trim()?.charAt(0)?.toUpperCase()}
                       </div>
                       <div>
                         <h3 className="font-black text-foreground text-xl">{booking.serviceName}</h3>
@@ -389,7 +394,8 @@ export default function MyBookings() {
                       <div>
                         <p className="text-[10px] text-foreground/40 font-black uppercase tracking-widest mb-1">Assistance Location</p>
                         <p className="font-bold text-foreground leading-relaxed">{selectedBooking.address}</p>
-                        <p className="text-xs font-bold text-foreground/40">{selectedBooking.area}, {selectedBooking.city}</p>
+                        <p className="text-xs font-bold text-foreground/60">{selectedBooking.area}, {selectedBooking.city}</p>
+                        <p className="text-xs font-bold text-foreground/40">{selectedBooking.division}</p>
                       </div>
                    </div>
                 </div>

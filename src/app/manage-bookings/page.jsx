@@ -167,7 +167,7 @@ export default function ManageBookings() {
                       <td className="px-8 py-6">
                         <div className="flex items-center gap-4">
                           <div className="w-12 h-12 bg-secondary/10 rounded-2xl flex items-center justify-center font-black text-secondary group-hover:scale-110 transition-transform">
-                            {booking.serviceName[0]}
+                            {booking.serviceName?.trim()?.charAt(0)?.toUpperCase()}
                           </div>
                           <div>
                             <div className="font-black text-foreground text-lg">{booking.serviceName}</div>
@@ -181,7 +181,8 @@ export default function ManageBookings() {
                       </td>
                       <td className="px-8 py-6">
                         <div className="text-sm font-bold text-foreground/80 truncate max-w-[200px]">{booking.address}</div>
-                        <div className="text-[10px] font-black text-foreground/30 uppercase tracking-widest">{booking.city}, {booking.division}</div>
+                        <div className="text-[10px] font-black text-foreground/40 uppercase tracking-widest">{booking.city}, {booking.area}</div>
+                        <div className="text-[9px] font-bold text-foreground/30">{booking.division}</div>
                       </td>
                       <td className="px-8 py-6">
                         <div className="flex flex-col items-center gap-2">
@@ -239,7 +240,7 @@ export default function ManageBookings() {
                   <div className="flex justify-between items-start">
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 bg-secondary/10 rounded-2xl flex items-center justify-center font-black text-secondary">
-                        {booking.serviceName[0]}
+                        {booking.serviceName?.trim()?.charAt(0)?.toUpperCase()}
                       </div>
                       <div className="max-w-[150px]">
                         <h3 className="font-black text-foreground text-xl truncate">{booking.serviceName}</h3>
